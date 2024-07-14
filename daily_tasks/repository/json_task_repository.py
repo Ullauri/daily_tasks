@@ -5,7 +5,7 @@ import os
 import json
 from typing import Dict, Any
 
-from daily_tasks.task_repository import TaskRepository
+from daily_tasks.repository import TaskRepository
 from daily_tasks.models import Task, TaskFilter
 
 MAX_TASKS_PER_FILE = 2000

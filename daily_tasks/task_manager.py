@@ -4,7 +4,7 @@ gui and repository classes to provide a complete task management system.
 """
 from typing import List, Dict, Any
 from daily_tasks.models import Task, Settings, Preferences
-from daily_tasks.task_repository import TaskRepository
+from daily_tasks.repository import TaskRepository
 from daily_tasks.ui import UI
 
 

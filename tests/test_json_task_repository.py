@@ -3,7 +3,7 @@ import unittest
 
 from tests import test_settings, test_preferences
 from daily_tasks.models import Task, TaskFilter
-from daily_tasks.json_task_repository import JSONTaskRepository
+from daily_tasks.repository.json_task_repository import JSONTaskRepository
 
 
 class TestJSONTaskRepository(unittest.TestCase):

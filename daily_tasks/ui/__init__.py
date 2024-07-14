@@ -49,7 +49,7 @@ class UI(ABC):
         """
         Register the callbacks for the UI.
 
-        Relates to from daily_tasks.task_repository import TaskRepository
+        Relates to from daily_tasks.repository import TaskRepository
 
         Args:
             on_get_task_by_index_callback: The callback to view a task by index.
