@@ -1,22 +1,19 @@
 import gi
-
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
-from typing import Callable, List
 
+from typing import Callable, List, Dict, Any
 from daily_tasks.ui import UI
-from daily_tasks.models import Task, TaskFilter
-
-MAX_DIALOG_WIDTH = 600
-MAX_DIALOG_HEIGHT = 400
+from daily_tasks.models import Task, TaskFilter, Settings, Preferences
 
 
-class TaskOverview(UI):
+class GTKTaskOverview(UI):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.window = Gtk.Window(title="Task Manager")
         self.window.set_border_width(10)
-        self.window.set_default_size(400, 300)
+        self.window.set_position(Gtk.WindowPosition.CENTER)
+        self.window.set_default_size(self.dt_preferences.gtk_ui.default_window_width, self.dt_preferences.gtk_ui.default_window_height)
 
         self.on_filter_tasks_callback = None
         self.on_create_task_callback = None
@@ -24,6 +21,8 @@ class TaskOverview(UI):
         self.on_delete_task_callback = None
         self.on_complete_task_callback = None
         self.on_get_task_callback = None
+        self.on_get_task_by_index_callback = None
+        self.on_get_task_by_id_callback = None
 
         # Creating the UI
         self.grid = Gtk.Grid()
@@ -80,7 +79,7 @@ class TaskOverview(UI):
         on_get_task_by_id_callback: Callable[[int], Task],
         on_filter_tasks_callback: Callable[[str], List[Task]],
         on_create_task_callback: Callable[[Task], List[Task]],
-        on_edit_task_callback: Callable[[int], List[Task]],
+        on_edit_task_callback: Callable[[int, Dict[str, Any]], List[Task]],
         on_delete_task_callback: Callable[[int], List[Task]],
         on_complete_task_callback: Callable[[int], List[Task]],
     ):
@@ -106,8 +105,8 @@ class TaskOverview(UI):
         response = dialog.run()
 
         if response == Gtk.ResponseType.OK:
-            title, description = dialog.get_task_data()
-            tasks = self.on_create_task_callback(Task(title=title, description=description))
+            data = dialog.get_task_data()
+            tasks = self.on_create_task_callback(Task(**data))
             self.__update_task_list_store(tasks)
 
         dialog.destroy()
@@ -121,12 +120,12 @@ class TaskOverview(UI):
             task = self.on_get_task_by_index_callback(task_index)
             task_id = task.id
 
-            dialog = TaskDialog(self.window, title="Edit Task", task=task)
+            dialog = TaskDialog(self.window, title="Edit Task", task=task, dt_settings=self.dt_settings, dt_preferences=self.dt_preferences)
             response = dialog.run()
 
             if response == Gtk.ResponseType.OK:
-                title, description = dialog.get_task_data()
-                tasks = self.on_edit_task_callback(task_id, Task(title=title, description=description))
+                data = dialog.get_task_data()
+                tasks = self.on_edit_task_callback(task_id, data)
                 self.__update_task_list_store(tasks)
 
             dialog.destroy()
@@ -163,7 +162,7 @@ class TaskOverview(UI):
             task_index = model.get_path(treeiter)[0]
             task = self.on_get_task_by_index_callback(task_index)
 
-            dialog = ViewTaskDialog(self.window, task)
+            dialog = ViewTaskDialog(self.window, task, dt_settings=self.dt_settings, dt_preferences=self.dt_preferences)
             dialog.run()
             dialog.destroy()
 
@@ -186,8 +185,11 @@ class TaskOverview(UI):
 
 
 class TaskDialog(Gtk.Dialog):
-    def __init__(self, parent, title, task=None):
+    def __init__(self, parent, title, task=None, dt_settings: Settings=None, dt_preferences: Preferences=None):
         super().__init__(title=title, transient_for=parent, flags=0)
+        self.dt_settings = dt_settings
+        self.dt_preferences = dt_preferences
+
         self.set_default_size(200, 100)
 
         self.add_buttons(
@@ -216,14 +218,20 @@ class TaskDialog(Gtk.Dialog):
 
         self.show_all()
 
-    def get_task_data(self):
-        return self.title_entry.get_text(), self.description_entry.get_text()
+    def get_task_data(self) -> Dict[str, Any]:
+        return {
+            "title": self.title_entry.get_text(),
+            "description": self.description_entry.get_text()
+        }
 
 
 class ViewTaskDialog(Gtk.Dialog):
-    def __init__(self, parent, task):
+    def __init__(self, parent, task, dt_settings: Settings=None, dt_preferences: Preferences=None):
         super().__init__(title="View Task", transient_for=parent, flags=0)
-        self.set_default_size(MAX_DIALOG_WIDTH, MAX_DIALOG_HEIGHT)
+        self.dt_settings = dt_settings
+        self.dt_preferences = dt_preferences
+
+        self.set_default_size(self.dt_preferences.gtk_ui.max_window_width, self.dt_preferences.gtk_ui.max_window_height)
 
         self.add_buttons(Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE)
 
@@ -231,8 +239,8 @@ class ViewTaskDialog(Gtk.Dialog):
 
         scrolled_window = Gtk.ScrolledWindow()
         scrolled_window.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
-        scrolled_window.set_min_content_width(MAX_DIALOG_WIDTH)
-        scrolled_window.set_min_content_height(MAX_DIALOG_HEIGHT)
+        scrolled_window.set_min_content_width(self.dt_preferences.gtk_ui.max_window_width)
+        scrolled_window.set_min_content_height(self.dt_preferences.gtk_ui.max_window_height)
         box.add(scrolled_window)
 
         self.grid = Gtk.Grid()
@@ -248,9 +256,12 @@ class ViewTaskDialog(Gtk.Dialog):
 
     def add_label_to_grid(self, label_text, value_text, row):
         label = Gtk.Label(label=label_text)
-        label.set_xalign(0)  # Align to the left
+        # Align to the left
+        label.set_xalign(0)
         value = Gtk.Label(label=value_text)
-        value.set_xalign(0)  # Align to the left
-        value.set_line_wrap(True)  # Allow text to wrap
+         # Align to the left
+        value.set_xalign(0)
+        # Allow text to wrap
+        value.set_line_wrap(True)
         self.grid.attach(label, 0, row, 1, 1)
         self.grid.attach(value, 1, row, 1, 1)

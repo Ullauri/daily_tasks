@@ -1,1 +1,8 @@
-{}
+{
+    "gtk_ui": {
+        "default_window_width": 500,
+        "default_window_height": 400,
+        "max_window_width": 800,
+        "max_window_height": 600
+    }
+}

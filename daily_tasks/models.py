@@ -6,16 +6,27 @@ from pydantic import BaseModel
 class JSONSettings(BaseModel):
     tasks_path: str
 
+
 class Settings(BaseModel):
     json_settings: JSONSettings
 
+
+class GTKUIPreferences(BaseModel):
+    default_window_width: int
+    default_window_height: int
+    max_window_width: int
+    max_window_height: int
+
+
 class Preferences(BaseModel):
-    ...
+    gtk_ui: GTKUIPreferences
+
 
 class TaskFilter(Enum):
     ALL = "all"
     COMPLETED = "completed"
     ACTIVE = "active"
+
 
 class Task(BaseModel):
     """

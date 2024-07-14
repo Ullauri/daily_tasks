@@ -8,8 +8,6 @@ from daily_tasks.config import load_config
 from daily_tasks.ui import UI
 from daily_tasks.task_repository import TaskRepository
 from daily_tasks.task_manager import TaskManager
-from daily_tasks.json_task_repository import JSONTaskRepository
-from daily_tasks.gtk_ui import TaskOverview
 
 
 def main():
@@ -32,12 +30,14 @@ def main():
     repository: str = args.repository
     repository_class: TaskRepository = None
     if repository == "json":
+        from daily_tasks.json_task_repository import JSONTaskRepository
         repository_class = JSONTaskRepository
 
     ui: str = args.ui
     ui_class: UI = None
     if ui == "gtk":
-        ui_class = TaskOverview
+        from daily_tasks.gtk_ui import GTKTaskOverview
+        ui_class = GTKTaskOverview
 
     task_manager = TaskManager(settings, preferences, ui_class, repository_class)
     task_manager.run()

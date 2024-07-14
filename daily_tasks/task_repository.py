@@ -4,7 +4,7 @@ This module defines an abstract base class for a task repository.
 from abc import ABC, abstractmethod
 from typing import Dict, Any
 
-from daily_tasks.models import Task, Settings, Preferences
+from daily_tasks.models import Task, Settings, Preferences, TaskFilter
 
 
 class TaskRepository(ABC):
@@ -51,7 +51,7 @@ class TaskRepository(ABC):
             data: The new data to update the task with.
 
         Returns:
-            None
+            task object
         """
 
     @abstractmethod
@@ -74,7 +74,7 @@ class TaskRepository(ABC):
         """
 
     @abstractmethod
-    def filter_tasks(self, filter_text: str) -> list[Task]:
+    def filter_tasks(self, filter_text: TaskFilter) -> list[Task]:
         """Filter tasks by text.
 
         Args:

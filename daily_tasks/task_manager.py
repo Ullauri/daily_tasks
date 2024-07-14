@@ -2,7 +2,7 @@
 This module contains the TaskManager class, which is responsible for orchestrating both
 gui and repository classes to provide a complete task management system.
 """
-from typing import List
+from typing import List, Dict, Any
 from daily_tasks.models import Task, Settings, Preferences
 from daily_tasks.task_repository import TaskRepository
 from daily_tasks.ui import UI
@@ -102,7 +102,7 @@ class TaskManager:
         self.visible_tasks = self.repository.list_tasks()
         return self.visible_tasks
 
-    def handle_edit_task(self, task_id: int, task: Task) -> List[Task]:
+    def handle_edit_task(self, task_id: int, data: Dict[str, Any]) -> List[Task]:
         """
         Handle the edit task event.
 
@@ -110,7 +110,7 @@ class TaskManager:
             task_id: The ID of the task to edit.
             task: The updated task.
         """
-        self.repository.update_task(task_id, task.__dict__)
+        self.repository.update_task(task_id, data)
         self.visible_tasks = self.repository.list_tasks()
         return self.visible_tasks
 

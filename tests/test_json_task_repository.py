@@ -1,18 +1,14 @@
 import os
-import tempfile
 import unittest
 
-from daily_tasks.models import Task, TaskFilter, Settings, Preferences, JSONSettings
+from tests import test_settings, test_preferences
+from daily_tasks.models import Task, TaskFilter
 from daily_tasks.json_task_repository import JSONTaskRepository
 
 
 class TestJSONTaskRepository(unittest.TestCase):
     def setUp(self):
-        settings = Settings(
-            json_settings=JSONSettings(tasks_path=tempfile.mktemp())
-        )
-        preferences = Preferences()
-        self.repository = JSONTaskRepository(dt_settings=settings, dt_preferences=preferences)
+        self.repository = JSONTaskRepository(dt_settings=test_settings, dt_preferences=test_preferences)
 
     def tearDown(self):
         os.remove(self.repository.tasks_path)

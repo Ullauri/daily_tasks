@@ -8,6 +8,7 @@ from typing import Dict, Any
 from daily_tasks.task_repository import TaskRepository
 from daily_tasks.models import Task, TaskFilter
 
+MAX_TASKS_PER_FILE = 2000
 
 class JSONTaskRepository(TaskRepository):
     """Concrete implementation of a task repository using JSON files."""
@@ -22,10 +23,13 @@ class JSONTaskRepository(TaskRepository):
             raise ValueError("json_settings.tasks_path must be provided")
 
         tasks_path = self.dt_settings.json_settings.tasks_path
+        os.makedirs(os.path.dirname(tasks_path), exist_ok=True)
         if not os.path.exists(tasks_path):
             with open(tasks_path, 'w+', encoding='utf-8') as fh:
                 fh.write('[]')
             print(f'Created new tasks file at {tasks_path}')
+        else:
+            print(f'Using existing tasks file at {tasks_path}')
 
         self.tasks_path = tasks_path
         self.tasks: dict[int, Task] = {}
@@ -34,6 +38,7 @@ class JSONTaskRepository(TaskRepository):
 
     def load_tasks(self):
         """Load all tasks"""
+        print(f'Loading tasks from {self.tasks_path}')
         with open(self.tasks_path, 'r', encoding='utf-8') as fh:
             records = json.load(fh)
             for record in records:
@@ -43,6 +48,13 @@ class JSONTaskRepository(TaskRepository):
 
     def _save_tasks(self):
         """Save all tasks"""
+        if len(self.tasks) == 0:
+            with open(self.tasks_path, 'w', encoding='utf-8') as fh:
+                fh.write('[]')
+                return
+        elif len(self.tasks) >= MAX_TASKS_PER_FILE:
+            raise ValueError(f"Maximum number of tasks per file exceeded: {MAX_TASKS_PER_FILE}; Delete some tasks first.")
+
         with open(self.tasks_path, 'w', encoding='utf-8') as fh:
             json.dump([task.model_dump() for task in self.tasks.values()], fh, indent=4)
             self.next_id = len(self.tasks) + 1

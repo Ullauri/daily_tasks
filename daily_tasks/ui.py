@@ -2,14 +2,14 @@
 This module defines an abstract base class for a UI manager.
 """
 from abc import ABC, abstractmethod
-from typing import Callable, List
+from typing import Callable, List, Dict, Any
 
 from daily_tasks.models import Settings, Preferences, Task, TaskFilter
 
 
 class UI(ABC):
     """
-    Abstract base class for a UI manager.
+    Abstract base class for a Task Manager UI.
     """
     description_limit = 50
 
@@ -42,7 +42,7 @@ class UI(ABC):
         on_get_task_by_id_callback: Callable[[int], Task],
         on_filter_tasks_callback: Callable[[TaskFilter], List[Task]],
         on_create_task_callback: Callable[[Task], List[Task]],
-        on_edit_task_callback: Callable[[int, Task], List[Task]],
+        on_edit_task_callback: Callable[[int, Dict[str, Any]], List[Task]],
         on_delete_task_callback: Callable[[int], List[Task]],
         on_complete_task_callback: Callable[[int], List[Task]],
     ):
