@@ -24,7 +24,7 @@ def main():
         type=str,
         help="Specify the repository type to use; options are 'json' or 'sqlite'"
     )
-    parser.add_argument("ui", type=str, help="Specify the UI type; options are 'gtk'")
+    parser.add_argument("ui", type=str, help="Specify the UI type; options are 'gtk' or 'cmdline'")
     args = parser.parse_args()
 
     repository: str = args.repository
@@ -38,6 +38,9 @@ def main():
     if ui == "gtk":
         from daily_tasks.ui.gtk_ui import GTKTaskOverview
         ui_class = GTKTaskOverview
+    if ui == "cmdline":
+        from daily_tasks.ui.command_line_ui import CommandLineUI
+        ui_class = CommandLineUI
 
     task_manager = TaskManager(settings, preferences, ui_class, repository_class)
     task_manager.run()

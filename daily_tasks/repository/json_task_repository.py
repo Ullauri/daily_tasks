@@ -148,9 +148,13 @@ class JSONTaskRepository(TaskRepository):
         Returns:
             A list of task objects.
         """
-        if filter_text == TaskFilter.ACTIVE:
+        if filter_text == TaskFilter.ACTIVE.value:
             return [task for task in self.tasks.values() if not task.completed]
-        elif filter_text == TaskFilter.COMPLETED:
+
+        if filter_text == TaskFilter.COMPLETED.value:
             return [task for task in self.tasks.values() if task.completed]
-        else:
+
+        if filter_text == TaskFilter.ALL.value:
             return list(self.tasks.values())
+
+        raise ValueError(f"{filter_text} is not a valid filter option")
