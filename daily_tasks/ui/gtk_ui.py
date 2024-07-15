@@ -167,15 +167,15 @@ class GTKTaskOverview(UI):
             dialog.destroy()
 
     def on_list_active(self, widget):
-        tasks = self.on_filter_tasks_callback(TaskFilter.ACTIVE)
+        tasks = self.on_filter_tasks_callback(TaskFilter.ACTIVE.value)
         self.__update_task_list_store(tasks)
 
     def on_list_completed(self, widget):
-        tasks = self.on_filter_tasks_callback(TaskFilter.COMPLETED)
+        tasks = self.on_filter_tasks_callback(TaskFilter.COMPLETED.value)
         self.__update_task_list_store(tasks)
 
     def on_list_all(self, widget):
-        tasks = self.on_filter_tasks_callback(TaskFilter.ALL)
+        tasks = self.on_filter_tasks_callback(TaskFilter.ALL.value)
         self.__update_task_list_store(tasks)
 
     def launch(self):
