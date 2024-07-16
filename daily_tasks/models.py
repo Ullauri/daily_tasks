@@ -7,8 +7,13 @@ class JSONSettings(BaseModel):
     tasks_path: str
 
 
+class SQLiteSettings(BaseModel):
+    db_path: str
+
+
 class Settings(BaseModel):
     json_settings: JSONSettings
+    sqlite_settings: SQLiteSettings
 
 
 class GTKUIPreferences(BaseModel):
@@ -23,6 +28,9 @@ class Preferences(BaseModel):
 
 
 class TaskFilter(Enum):
+    """
+    Enum class for task filters.
+    """
     ALL = "all"
     COMPLETED = "completed"
     ACTIVE = "active"

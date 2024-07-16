@@ -32,13 +32,16 @@ def main():
     if repository == "json":
         from daily_tasks.repository.json_task_repository import JSONTaskRepository
         repository_class = JSONTaskRepository
+    elif repository == "sqlite":
+        from daily_tasks.repository.sqlite_task_repository import SQLiteTaskRepository
+        repository_class = SQLiteTaskRepository
 
     ui: str = args.ui
     ui_class: UI = None
     if ui == "gtk":
         from daily_tasks.ui.gtk_ui import GTKTaskOverview
         ui_class = GTKTaskOverview
-    if ui == "cmdline":
+    elif ui == "cmdline":
         from daily_tasks.ui.command_line_ui import CommandLineUI
         ui_class = CommandLineUI
 

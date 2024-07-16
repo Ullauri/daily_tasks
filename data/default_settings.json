@@ -1,5 +1,8 @@
 {
     "json_settings": {
         "tasks_path": "./.local/share/bcabrera/daily_tasks/tasks.json" 
+    },
+    "sqlite_settings": {
+        "db_path": "./.local/share/bcabrera/daily_tasks/tasks.db"
     }
 }

@@ -1,10 +1,11 @@
 import tempfile
-from daily_tasks.models import Settings, Preferences, JSONSettings, GTKUIPreferences
+from daily_tasks.models import Settings, Preferences, JSONSettings, GTKUIPreferences, SQLiteSettings
 
 
 test_settings = Settings(
-            json_settings=JSONSettings(tasks_path=tempfile.mktemp())
-        )
+    json_settings=JSONSettings(tasks_path=tempfile.mktemp()),
+    sqlite_settings=SQLiteSettings(db_path=tempfile.mktemp())
+)
 
 test_preferences = Preferences(
     gtk_ui=GTKUIPreferences(
