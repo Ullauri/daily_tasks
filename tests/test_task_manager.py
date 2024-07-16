@@ -26,12 +26,6 @@ class TestTaskManager(unittest.TestCase):
             repository_class=self.repository_class
         )
 
-    def test_handle_view_task_by_index(self):
-        task = Task(title="Test Task", description="This is a test task")
-        self.task_manager.visible_tasks = [task]
-        result = self.task_manager.handle_view_task_by_index(0)
-        self.assertEqual(result, task)
-
     def test_handle_view_task_by_id(self):
         task = Task(title="Test Task", description="This is a test task")
         self.repository.read_task.return_value = task

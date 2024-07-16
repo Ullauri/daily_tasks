@@ -39,12 +39,10 @@ class TaskManager:
         self.repository_class = repository_class
         self.repository: TaskRepository = self.repository_class(dt_settings=settings, dt_preferences=preferences)
 
-
-        self.visible_tasks: List[Task] = self.repository.list_tasks()
         self.gui: UI = self.ui_class(
             dt_settings=settings,
             dt_preferences=preferences,
-            init_tasks=self.visible_tasks,
+            init_tasks=self.repository.list_tasks(),
         )
 
     def run(self):
@@ -53,7 +51,6 @@ class TaskManager:
         """
         print("Running task manager application...")
         self.gui.register_callbacks(
-            self.handle_view_task_by_index,
             self.handle_view_task_by_id,
             self.handle_filter_tasks,
             self.handle_create_task,
@@ -63,15 +60,6 @@ class TaskManager:
         )
         self.gui.launch()
     
-    def handle_view_task_by_index(self, task_index: int) -> Task:
-        """
-        Handle the view task event.
-
-        Args:
-            task_index: The index of the task to view.
-        """
-        return self.visible_tasks[task_index]
-
     def handle_view_task_by_id(self, task_id: int) -> Task:
         """
         Handle the view task event.
@@ -88,8 +76,7 @@ class TaskManager:
         Args:
             filter_text: The text to filter tasks by.
         """
-        self.visible_tasks = self.repository.filter_tasks(filter_text)
-        return self.visible_tasks
+        return self.repository.filter_tasks(filter_text)
 
     def handle_create_task(self, task: Task) -> List[Task]:
         """
@@ -99,8 +86,7 @@ class TaskManager:
             task: The task to create.
         """
         self.repository.create_task(task)
-        self.visible_tasks = self.repository.list_tasks()
-        return self.visible_tasks
+        return self.repository.list_tasks()
 
     def handle_edit_task(self, task_id: int, data: Dict[str, Any]) -> List[Task]:
         """
@@ -111,8 +97,7 @@ class TaskManager:
             task: The updated task.
         """
         self.repository.update_task(task_id, data)
-        self.visible_tasks = self.repository.list_tasks()
-        return self.visible_tasks
+        return self.repository.list_tasks()
 
     def handle_delete_task(self, task_id: int) -> List[Task]:
         """
@@ -122,8 +107,7 @@ class TaskManager:
             task_id: The ID of the task to delete.
         """
         self.repository.delete_task(task_id)
-        self.visible_tasks = self.repository.list_tasks()
-        return self.visible_tasks
+        return self.repository.list_tasks()
 
     def handle_complete_task(self, task_id: int) -> List[Task]:
         """
@@ -133,5 +117,4 @@ class TaskManager:
             task_id: The ID of the task to complete.
         """
         self.repository.update_task(task_id, {'completed': True})
-        self.visible_tasks = self.repository.list_tasks()
-        return self.visible_tasks
+        return self.repository.list_tasks()

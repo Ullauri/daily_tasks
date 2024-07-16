@@ -38,7 +38,6 @@ class UI(ABC):
     @abstractmethod
     def register_callbacks(
         self,
-        on_get_task_by_index_callback: Callable[[int], Task],
         on_get_task_by_id_callback: Callable[[int], Task],
         on_filter_tasks_callback: Callable[[TaskFilter], List[Task]],
         on_create_task_callback: Callable[[Task], List[Task]],
@@ -52,7 +51,6 @@ class UI(ABC):
         Relates to from daily_tasks.repository import TaskRepository
 
         Args:
-            on_get_task_by_index_callback: The callback to view a task by index.
             on_get_task_by_id_callback: The callback to view a task by id.
             on_filter_tasks_callback: The callback to filter tasks.
             on_create_task_callback: The callback to create a task.

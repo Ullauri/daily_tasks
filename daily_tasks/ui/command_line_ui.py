@@ -62,14 +62,12 @@ class CommandLineUI(UI):
         self.on_delete_task_callback = None
         self.on_complete_task_callback = None
         self.on_filter_tasks_callback = None
-        self.on_get_task_by_index_callback = None
         self.on_get_task_by_id_callback = None
 
         self.tasks: List[Task] = kwargs["init_tasks"]
 
     def register_callbacks(
         self,
-        on_get_task_by_index_callback: Callable[[int], Task],
         on_get_task_by_id_callback: Callable[[int], Task],
         on_filter_tasks_callback: Callable[[str], List[Task]],
         on_create_task_callback: Callable[[Task], List[Task]],
@@ -85,7 +83,6 @@ class CommandLineUI(UI):
         self.on_delete_task_callback = on_delete_task_callback
         self.on_complete_task_callback = on_complete_task_callback
         self.on_filter_tasks_callback = on_filter_tasks_callback
-        self.on_get_task_by_index_callback = on_get_task_by_index_callback
         self.on_get_task_by_id_callback = on_get_task_by_id_callback
 
     def handle_command(self):

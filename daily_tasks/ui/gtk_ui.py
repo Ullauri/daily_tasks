@@ -21,7 +21,6 @@ class GTKTaskOverview(UI):
         self.on_delete_task_callback = None
         self.on_complete_task_callback = None
         self.on_get_task_callback = None
-        self.on_get_task_by_index_callback = None
         self.on_get_task_by_id_callback = None
 
         # Creating the UI
@@ -29,6 +28,7 @@ class GTKTaskOverview(UI):
         self.window.add(self.grid)
 
         # Task List
+        self.tasks: List[Task] = []
         self.task_list_store = Gtk.ListStore(str, str, str)
         self.__update_task_list_store(kwargs["init_tasks"])
 
@@ -70,12 +70,13 @@ class GTKTaskOverview(UI):
 
     def __update_task_list_store(self, tasks: List[Task] = None):
         self.task_list_store.clear()
+        self.tasks.clear()
         for task in tasks:
+            self.tasks.append(task)
             self.task_list_store.append([task.title, task.description_display_text(), str(task.completed)])
 
     def register_callbacks(
         self,
-        on_get_task_by_index_callback: Callable[[int], Task],
         on_get_task_by_id_callback: Callable[[int], Task],
         on_filter_tasks_callback: Callable[[str], List[Task]],
         on_create_task_callback: Callable[[Task], List[Task]],
@@ -88,7 +89,6 @@ class GTKTaskOverview(UI):
         self.on_delete_task_callback = on_delete_task_callback
         self.on_complete_task_callback = on_complete_task_callback
         self.on_filter_tasks_callback = on_filter_tasks_callback
-        self.on_get_task_by_index_callback = on_get_task_by_index_callback
         self.on_get_task_by_id_callback = on_get_task_by_id_callback
 
         self.list_active_button.connect("clicked", self.on_list_active)
@@ -117,7 +117,7 @@ class GTKTaskOverview(UI):
 
         if treeiter is not None:
             task_index = model.get_path(treeiter)[0]
-            task = self.on_get_task_by_index_callback(task_index)
+            task = self.tasks[task_index]
             task_id = task.id
 
             dialog = TaskDialog(self.window, title="Edit Task", task=task, dt_settings=self.dt_settings, dt_preferences=self.dt_preferences)
@@ -136,7 +136,7 @@ class GTKTaskOverview(UI):
 
         if treeiter is not None:
             task_index = model.get_path(treeiter)[0]
-            task = self.on_get_task_by_index_callback(task_index)
+            task = self.tasks[task_index]
             task_id = task.id
 
             tasks = self.on_delete_task_callback(task_id)
@@ -148,7 +148,7 @@ class GTKTaskOverview(UI):
 
         if treeiter is not None:
             task_index = model.get_path(treeiter)[0]
-            task = self.on_get_task_by_index_callback(task_index)
+            task = self.tasks[task_index]
             task_id = task.id
 
             tasks = self.on_complete_task_callback(task_id)
@@ -160,7 +160,7 @@ class GTKTaskOverview(UI):
 
         if treeiter is not None:
             task_index = model.get_path(treeiter)[0]
-            task = self.on_get_task_by_index_callback(task_index)
+            task = self.tasks[task_index]
 
             dialog = ViewTaskDialog(self.window, task, dt_settings=self.dt_settings, dt_preferences=self.dt_preferences)
             dialog.run()
