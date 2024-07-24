@@ -15,7 +15,7 @@ class TestTaskManager(unittest.TestCase):
 
         self.gui_class = MagicMock(spec=UI)
         self.repository_class = MagicMock(spec=TaskRepository)
-        
+
         self.repository = MagicMock(spec=TaskRepository)
         self.repository_class.return_value = self.repository
 

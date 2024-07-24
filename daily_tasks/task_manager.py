@@ -12,7 +12,13 @@ class TaskManager:
     """
     Application Orchestrator.
     """
-    def __init__(self, settings: Settings, preferences: Preferences, gui_class: UI, repository_class: TaskRepository):
+    def __init__(
+        self,
+        settings: Settings,
+        preferences: Preferences,
+        gui_class: UI,
+        repository_class: TaskRepository
+    ):
         """
         Initializes a new instance of the TaskManager class.
 
@@ -59,7 +65,7 @@ class TaskManager:
             self.handle_complete_task,
         )
         self.gui.launch()
-    
+
     def handle_view_task_by_id(self, task_id: int) -> Task:
         """
         Handle the view task event.
